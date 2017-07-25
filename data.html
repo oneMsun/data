@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>日历</title>
+  <style type="text/css">
+    *{
+      padding: 0;
+      margin:0;
+      
+    }
+    li{
+      list-style: none;
+    }
+    body{
+      padding: 30px;
+    }
+    a{
+      text-decoration: none;
+    }
+
+    .container{
+      width: 450px;
+      height: 600px;
+      background: #000;
+      margin: 0 auto;
+      position: relative;
+      top: 0;
+    }
+    .now-time{
+      float: left;
+      width: 450px;
+      border-bottom: 1px solid #fff;
+      padding-bottom: 15px;
+    }
+    .now-time span:nth-child(1){
+      display: block;
+      color: #fff;
+      font-size:50px;
+      float: left;
+      /*width: 400px;*/
+      margin-top: 10px;
+      margin-left: 10px;
+    }
+    .now-time span:nth-child(2){
+      display: block;
+      color: #8dd6ed;
+      font-size: 16px;
+      float: left;
+      margin-top: 70px;
+      margin-left: -197px;
+    }
+    .date-month {
+      width: 450px;
+      height: 66px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-sizing: border-box;
+      padding: 0 25px 0 24px;
+    }
+    .cur-month {
+      height: 100%;
+      color: #ccc;
+      font: 16px/66px Arial;
+    }
+    .set-month a, .cur-month {
+      /*cursor: default;
+      -webkit-user-select: none;*/
+    }
+    .set-month a:hover, .cur-month:hover {
+      color: #fff;
+    }
+
+    .date-days span{
+      display: inline-block;
+      width: 55px;
+      height: 55px;
+      border: 2px solid rgba(0,0,0,0);
+      text-align: center;
+      color: #fff;
+      line-height: 55px;
+      cursor: default;
+    }
+    .date-nums span{
+      display: inline-block;
+      width: 59.5px;
+      height: 55px;
+      border: 2px solid rgba(0,0,0,0);
+      text-align: center;
+      color: #fff;
+      line-height: 55px;
+      cursor: default;
+    }
+
+   .date-nums span:hover {
+      border-color: #fff;
+    }
+    .current-day {
+      background: rgb(141, 214, 237);
+    }
+    .date-nums span.other-month-date {
+      color: #fff;
+    }
+    .date-nums1 span.other-month-date {
+      color: #fff;
+    }
+    .todayBtn{
+      display: block;
+      color: #000;
+      width: 80px;
+      height: 25px;
+      text-align: center;
+      line-height: 25px;
+      background:#fff;
+      font-size:15px;
+      border-left:1px solid #808080;
+      border-right: 1px solid #808080;
+      float: left;
+    }
+    .prev{
+      display: block;
+      width: 30px;
+      height: 25px;
+      background: #fff;
+      border-bottom-left-radius: 5px;
+      border-top-left-radius: 5px;
+      line-height: 25px;
+      text-align: center;
+      float: left;
+    }
+    .next{
+      display: block;
+      width: 30px;
+      height: 25px;
+      background: #fff;
+      border-bottom-right-radius: 5px;
+      border-top-right-radius: 5px;
+      line-height: 25px;
+      text-align: center;
+      float: left;
+    }
+
+    .set-month .prev ,.set-month .next{
+      color: #ccc;
+      font-size: 20px;
+    }
+    .set-month{
+      width: 146px;
+      float: right;
+      z-index: 999;
+    }
+    .date-dates{
+      width: 450px;
+    }
+    .date-days{
+      width: 450px;
+      height: 59px;
+    }
+    .date-nums {
+      height: 354px;
+      width: 450px;
+    }
+
+    .box-list{
+      width: 450px;
+      position: absolute;
+      top:0px;
+      overflow: hidden;
+    }
+    .animaitonBox{
+      width: 450px;
+      height: 354px;
+      position: relative;
+      top:0px;
+      overflow: hidden;
+    }
+
+
+
+
+  </style>
+  <script type="text/javascript" src = "tool.js"></script>
+  <script type="text/javascript">
+    window.onload = function(){
+      var timeHtml = document.querySelector('.now-time span:nth-child(1)');
+      var dateHtml = document.querySelector('.now-time span:nth-child(2)');
+      var todayBtn = document.querySelector('.todayBtn');
+      todayBtn.onclick = function(){
+        location.reload();
+        // alert(2);
+      }
+      autoPlay();
+      setInterval(autoPlay,500);
+      function autoPlay(){
+        var now = new Date();
+        var year = now.getFullYear(),month = now.getMonth()+1,date = now.getDate();
+        var hours = now.getHours(),minutes = now.getMinutes(),seconds = now.getSeconds();
+        timeHtml.innerHTML = add0(hours) + ':' + add0(minutes) + ':' + add0(seconds);
+        dateHtml.innerHTML = year + '年' + month + '月' + date + '日';
+      }
+      function add0(num){
+        return num < 10 ? '0' + num : '' + num;
+      }
+    var dateNums = document.querySelectorAll('.date-nums');
+    var curMonth = document.querySelector('.cur-month');
+    var boxList = document.querySelector(' .box-list');
+
+    var n = 0;
+
+    var data = createDateHtml(0);
+
+    dateNums[0].innerHTML = data.dateStr;
+    curMonth.innerHTML = `${data.year}年${data.month}月`;
+
+    var prev = document.querySelector('.prev');
+    var next = document.querySelector('.next');
+    var currentNum = 0;
+    next.onclick = function (){
+      var data = createDateHtml(++n);
+      currentNum++;
+      if(currentNum === dateNums.length){
+        boxList.style.top = '';
+        currentNum = 1;
+      }
+      dateNums[currentNum].innerHTML = data.dateStr;
+      Fq.animation(boxList, {top: -354*currentNum},200);
+      curMonth.innerHTML = `${data.year}年${data.month}月`;
+    }
+
+    prev.onclick = function (){
+      var data = createDateHtml(--n);
+      currentNum--;
+      if(currentNum < 0){
+        boxList.style.top = 354*(dateNums.length-1) + 'px';
+        currentNum = dateNums.length-1;
+      }
+      dateNums[currentNum].innerHTML = data.dateStr;
+      Fq.animation(boxList, {top: -354*currentNum},200);
+      curMonth.innerHTML = `${data.year}年${data.month}月`;
+    }
+
+
+
+    function createDateHtml(n){
+      var newDate = new Date();
+
+      // 设置一个标准不变的时候用来做对照
+      var flagDate = new Date();
+      var flagYear = flagDate.getFullYear();
+      var flagMonth = flagDate.getMonth() + 1;
+
+      // 设置一下上个月或者下个月
+      newDate.setMonth(newDate.getMonth() + n)
+
+      var year = newDate.getFullYear();
+      var month = newDate.getMonth() + 1;
+      var date = newDate.getDate();
+
+
+
+      // 设置到当月的1号
+      newDate.setDate(1);
+
+      // 拿到当月的1号是星期几
+      var prevMonthIndex = newDate.getDay();
+
+      // 获取到1号前面空了多少个各自，正好是1号对应的星期数- 1
+      prevMonthIndex = prevMonthIndex === 0 ? 6 : --prevMonthIndex;
+
+      // 设置到下个月
+      newDate.setMonth(newDate.getMonth() + 1);
+
+      // 设置下个月的日期为0，获取到当月有多少天
+      newDate.setDate(0);
+
+      // 获取当月有多少天
+      var currentMonthDates = newDate.getDate();
+
+      // 设置到上一个的最后一天
+      newDate.setDate(0);
+
+      // 获取到上个月的最后一天是几号，就拿到上个月有多少天了
+      var prevMonthDates = newDate.getDate();
+
+
+      var str = '';
+
+      // 生成上个月剩余的要显示的天数
+      for(var i = prevMonthIndex - 1; i>=0; i--){
+        str += `<span style = "color :#545454">${prevMonthDates - i}</span>`;
+      }
+
+      // 生成当月的日期数
+      var cls = '';
+      for(var i=1; i<=currentMonthDates; i++){
+        if(i === date && year === flagYear && month === flagMonth){
+          cls = 'current-day'
+        }else{
+          cls = '';
+        }
+        str += `<span class="${cls}">${i}</span>`;
+      }
+
+      // 生成下个月的日期
+
+      for(var i=1; i<=42 -currentMonthDates -prevMonthIndex; i++){
+        str += `<span style = "color :#545454">${i}</span>`;
+      }
+
+
+      return {dateStr: str, year: year, month: month};
+    }
+
+
+    }
+  </script>
+</head>
+<body>
+  <div class="container">
+    <div class="now-time">
+        <span>18:06:51</span>
+        <span>2017年4月24号</span>
+    </div>
+    <div class="date-month">
+      <div class="cur-month">xxxx年x月</div>
+      <div class="set-month">
+        <a href="javascript:;" class="prev"><</a>
+        <a href="javascript:;" class="todayBtn"> 今天</a>
+        <a href="javascript:;" class="next">></a>
+      </div>
+    </div>
+    <div class="date-dates">
+      <div class="date-days">
+        <span>一</span>
+        <span>二</span>
+        <span>三</span>
+        <span>四</span>
+        <span>五</span>
+        <span>六</span>
+        <span>日</span>
+      </div>
+      <div class="animaitonBox">
+         <div class="box-list">
+           <div class="date-nums"></div>
+           <div class="date-nums"></div>
+           <div class="date-nums"></div>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+</body>
+
+</html>
